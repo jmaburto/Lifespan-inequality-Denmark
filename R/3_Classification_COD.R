@@ -12,7 +12,7 @@
 library(data.table)
 library(reshape2)
 
-Your_working_directory <- "C:/Users/jmaburto/Documents/GitHub/Lifespan-inequality-in-Denmark"
+Your_working_directory <- "C:/Users/jmaburto/Documents/GitHub/Lifespan-inequality-Denmark"
 setwd(Your_working_directory)
 
 # Run this line to update the COD RData file
@@ -21,6 +21,8 @@ setwd(Your_working_directory)
 # Load data from 2_Get_WHO_Data.R
 get(load('Data/COD_Data.RData'))
 
+unique(COD_Data$List)
+
 # We have to group causes according to the ICD classification
 # for ICD7 we use the list 07A from WHO documentation for all years
 # Ask for help to Maarten to classify causes of death following the Janssesn & Kunst paper
@@ -28,8 +30,10 @@ get(load('Data/COD_Data.RData'))
 ICD7 <- COD_Data[COD_Data$ICD == 7,]
 unique(ICD7$Cause)
 
-
-
+ICD10 <- COD_Data[COD_Data$ICD == 10,]
+l <- sort(unique(ICD10$Cause))
+length(l)
+l[1000:4203]
 # We have similar age groups for all the years and causes of death and sexes
 
 
