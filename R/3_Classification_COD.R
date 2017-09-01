@@ -1,19 +1,11 @@
 ###############################################################################
 ### Get CoD data for Denmark, Sweden and Norway. Source: WHO (07/07/2017)     #
-###############################################################################
 
-# Classification of causes of death (see paper)
-# 1. Infectious diseases
-# 2. Circulatory diseases
-# 3. Neoplasms
-# 4. External causes
-# 5. Other causes
 
 library(data.table)
 library(reshape2)
 
-Your_working_directory <- "C:/Users/jmaburto/Documents/GitHub/Lifespan-inequality-Denmark"
-setwd(Your_working_directory)
+setwd("C:/Users/jmaburto/Documents/GitHub/Lifespan-inequality-Denmark")
 
 # Run this line to update the COD RData file
 # source(file = 'R/2_Get_WHO_Data.R')
@@ -25,179 +17,292 @@ unique(COD_Data$List)
 
 # We have to group causes according to the ICD classification
 # for ICD7 we use the list 07A from WHO documentation for all years
-# Ask for help to Maarten to classify causes of death following the Janssesn & Kunst paper
+# Maarten to classify causes of death following the Janssesn & Kunst paper
 # and the WHO documentation.
-ICD7 <- COD_Data[COD_Data$ICD == 7,]
-unique(ICD7$Cause)
 
-ICD10 <- COD_Data[COD_Data$ICD == 10,]
-l <- sort(unique(ICD10$Cause))
-length(l)
-l[1000:4203]
-# We have similar age groups for all the years and causes of death and sexes
+#Classification made by Marteen (10 categories), if soesn't work regroup to 
+# He provided the bridged codes
 
-
-
-
-# Create a vector with the countries we are interested in
-Country.name.vec <- c('Denmark','Sweden','Norway')
-
-# Create a vector with the countries' codes according to WHO
-Country.code.vec <- c(4050,4290,4220)
-
-# Information for ICD7
-ICD7    <- data.table(read.table(  file = 'Data/WHO Data/MortIcd7.txt',header = T,sep = ',',stringsAsFactors = F))
-ICD7    <- ICD7[(ICD7$Country==4050 | ICD7$Country==4290 | ICD7$Country==4220) & ICD7$Year >= 1960,]
-ICD7$ICD<- 7
-# Information for ICD8
-ICD8    <- data.table(read.table(  file = 'Data/WHO Data/MortIcd8.txt',header = T,sep = ',',stringsAsFactors = F))
-ICD8    <- ICD8[(ICD8$Country==4050 | ICD8$Country==4290 | ICD8$Country==4220) & ICD8$Year >= 1960,]
-ICD8$ICD<- 8
-# Information for ICD9
-ICD9    <- data.table(read.table(  file = 'Data/WHO Data/MortIcd9.txt',header = T,sep = ',',stringsAsFactors = F))
-ICD9    <- ICD9[(ICD9$Country==4050 | ICD9$Country==4290 | ICD9$Country==4220) & ICD9$Year >= 1960,]
-ICD9$ICD<- 9
-# Information for ICD10
-ICD10_1 <- data.table(read.table(  file = 'Data/WHO Data/MortIcd10_part1.txt',header = T,sep = ',',stringsAsFactors = F))
-ICD10_2 <- data.table(read.table(  file = 'Data/WHO Data/MortIcd10_part2.txt',header = T,sep = ',',stringsAsFactors = F))
-ICD10   <- rbind(ICD10_1,ICD10_2)
-ICD10   <- ICD10[(ICD10$Country==4050 | ICD10$Country==4290 | ICD10$Country==4220) & ICD10$Year >= 1960,]
-ICD10$ICD<- 10
-# No we have information on cause of death for Sweden, Norway and Denmark. Just anticipating in case we do any,
-# comparison. But now just focusing on Denmark
-COD_Data <- rbind(ICD7,ICD8,ICD9,ICD10)
-COD_Data <- COD_Data[COD_Data$Country == 4050,]
-# sex 1 is male, 2 is female, 9 is unspecified
-COD_Data <- COD_Data[COD_Data$Sex != 9,]
-COD_Data <- COD_Data[,c(1,4,5:40)]
-COD_Data$Sex <- as.factor(COD_Data$Sex)
-levels(COD_Data$Sex) <- c('m', 'f')
-save(COD_Data, file = 'Data/COD_Data.RData')
+#1  Infectious, non-respiratory
+#2  Cancer, amenable to smoking
+#3  Cancer, not amenable to smoking
+#4  Diabetes mellitus
+#5  Cardiovascular
+#6  Respiratory, infectious
+#7  Respiratory, non-infectious
+#8  External
+#9  Other
 
 
-# Frmat refers to the age-group format 
-unique(COD_Data$List)
-unique(COD_Data$Frmat)
-unique(COD_Data$IM_Frmat)
+# ICD 7 classification ----------------------------------------------------
+
+
+ICD7.data <- COD_Data[COD_Data$ICD==7,]
+
+# Drop those code that do not have an A to avoid duplicates
+bad.codes <-   unique(ICD7.data$Cause)[152:length(unique(ICD7.data$Cause))]
+bad.codes <- c(bad.codes[!(bad.codes %in% c(155,156,158,159,160,164,165,175,176,178,179,180,181,192,193,194,195,198,199))], 'A057')
+ICD7.data <-   ICD7.data[!(ICD7.data$Cause %in% bad.codes),]
+
+# Exclude the cause A000, is all causes in documentation
+ICD7.data <- ICD7.data[ICD7.data$Cause != 'A000']
+
+# Bad codes
+ICD7.data$Cat <- 10
+
+########## category 1
+ICD7.data[ICD7.data$Cause %in% c(paste0('A00',1:9),paste0('A0', 10:43)),]$Cat <- 1
+
+########## category 2
+ICD7.data[ICD7.data$Cause %in% c(paste0('A0',44:50),'A052','157'),]$Cat <- 2
+
+########## category 3
+ICD7.data[ICD7.data$Cause %in% c(paste0('A0',53:56),'A051','A058','A059',
+                                 '155','156','158','159','160','164','165','175','176','178','179',
+                                 '180','181','192','193','194','195','198','199'),]$Cat <- 3
+
+########## category 4
+ICD7.data[ICD7.data$Cause %in% c('A063'),]$Cat <- 4
+
+########## category 5
+ICD7.data[ICD7.data$Cause %in% c('A070',paste0('A0',79:86)),]$Cat <- 5
+
+########## category 6
+ICD7.data[ICD7.data$Cause %in% c('A095',paste0('A0',87:92)),]$Cat <- 6
+
+########## category 7
+ICD7.data[ICD7.data$Cause %in% c('A093','A094','A096','A097'),]$Cat <- 7
+
+########## category 8
+ICD7.data[ICD7.data$Cause %in% c(paste0('A',138:150)),]$Cat <- 8
+unique(ICD7.data$Cat)
+
+########## category 9
+ICD7.data[ICD7.data$Cause %in% c(paste0('A0',60:62),paste0('A0',64:69),
+                                 paste0('A0',71:78),paste0('A0',98:99),
+                                 paste0('A',100:137)),]$Cat <- 9
+unique(ICD7.data$Cat)
+
+
+# ICD 8 classification ----------------------------------------------------
+
+ICD8.data    <- COD_Data[COD_Data$ICD==8,]
+good.codes8  <- unique(ICD8.data$Cause)[178:327]
+good.codes8  <- good.codes8[good.codes8!='A058']
+good.codes8  <- c(good.codes8, as.character(c(155,156,158,159,160,163,171,183,184,186:199,157)))
+# Drop those code that do not have an A to avoid duplicates
+ICD8.data <-   ICD8.data[ICD8.data$Cause %in% good.codes8,]
+
+########## Bad codes
+ICD8.data$Cat <- 10
+
+
+########## category 1
+ICD8.data[ICD8.data$Cause %in% c(paste0('A00',1:9),paste0('A0', 10:44)),]$Cat <- 1
+
+########## category 2
+ICD8.data[ICD8.data$Cause %in% c(paste0('A0',45:51),'A055','157'),]$Cat <- 2
+
+########## category 3
+ICD8.data[ICD8.data$Cause %in% c(paste0('A0',52:54),paste0('A0',56:57),
+                                 paste0('A0',59:60),
+                                 as.character(c(155,156,158,159,160,163,171,183,184,186:199))),]$Cat <- 3
+
+########## category 4
+ICD8.data[ICD8.data$Cause %in% c('A064'),]$Cat <- 4
+
+########## category 5
+ICD8.data[ICD8.data$Cause %in% c(paste0('A0',80:88)),]$Cat <- 5
+
+########## category 6
+ICD8.data[ICD8.data$Cause %in% c('A095',paste0('A0',89:92)),]$Cat <- 6
+
+########## category 7
+ICD8.data[ICD8.data$Cause %in% c('A093','A094','A096'),]$Cat <- 7
+
+########## category 8
+ICD8.data[ICD8.data$Cause %in% c(paste0('A',138:150)),]$Cat <- 8
+
+
+########## Rest causes (category 9)
+ICD8.data[ICD8.data$Cause %in% c(paste0('A0',61:63),paste0('A0',65:79),
+                                 paste0('A0',97:99),paste0('A',100:137)),]$Cat <- 9
+
+unique(ICD8.data$Cat)
 
 
 
-Deaths.data  <- NULL
-# Create a loop to find the year of change between ICD9 and ICD10 and create homogeneous datasets
-for (i in 1:length(Country.code.vec)){
-  
-  # read data for each country ICD9 and ICD10
-  
-  if(Country.name.vec[i] == 'Bolivia' | Country.name.vec[i]=='Haiti'){ ICD9.data <- NULL} else {ICD9.data  <- read.table(paste0('Data/ICD9/ICD9-',Country.code.vec[i],'.txt'),
-                          header = T, sep = ',', stringsAsFactors = F)}
-  
-  ICD10.data <- read.table(paste0('Data/ICD10/ICD10-',Country.code.vec[i],'.txt'),
-                          header = T, sep = ',', stringsAsFactors = F)
-  
-  # Peru also has a year 0 in ICD10.data
-  ICD10.data <- ICD10.data[ICD10.data$Year > 0,]
-  
-  # Year of implementation OF ICD10
-  ICD10.y    <- c(ICD10.Year=min(ICD10.data$Year),Code=Country.code.vec[i],Country=Country.name.vec[i])
-  ICD10.year <- rbind(ICD10.year,ICD10.y)
-  # rbind both datasets
-  Deaths     <- rbind(ICD9.data,ICD10.data)
-  
-  # convert to data.table, it will make thinhk easier for applying functions
-  Deaths     <- data.table(Deaths)
-  
-  # Cuba has a year == 0, restrict to values > 0
-  Deaths              <- Deaths[Deaths$Year > 0,]
-  
-  # add a numeric age, makes thinks easier to order when needed by age
-  code.age                     <- unique(Deaths$Age)
+# ICD 9 classification ----------------------------------------------------
 
-  # age2 is coded numerically, 96 is UNK and 97 is total
-  code.age2                    <- c(97,0:4,seq(5,95,5),96)
-  names(code.age2)             <- code.age
-  Deaths$Age2                  <- code.age2[as.character(Deaths$Age)]
-  Deaths                       <- Deaths[with(Deaths,order(Year,Age2,Cause)),]
-  
-  # take care of duplicates in Brazil (IT DID NOT WORK COMPLETELY, SOME STRANGE RESULTS)
-  if ( i == 14) { Deaths <- unique(Deaths, by = colnames(Deaths)[1:4]) }
-  
-  # Complete ages that have no values of causes of death and fill them with 0
-  print(unique(Deaths$Cause))
-  mat.Deaths.f <- dcast(Deaths, Age2 + Cause ~ Year,value.var = 'Female',fill = 0, drop = F)
-  mat.Deaths.m <- dcast(Deaths, Age2 + Cause ~ Year,value.var = 'Male',fill = 0, drop = F)
-  
-  # now return to original shape
-  Deaths.f      <- melt(mat.Deaths.f,id.vars = c('Age2','Cause'),
-                       variable.name = 'Year',value.name = 'Female')
-  Deaths.m      <- melt(mat.Deaths.m,id.vars = c('Age2','Cause'),
-                       variable.name = 'Year',value.name = 'Male')
-  Deaths.f$Year <- as.numeric(as.character(Deaths.f$Year))
-  Deaths.m$Year <- as.numeric(as.character(Deaths.m$Year))
+ICD9.data    <- COD_Data[COD_Data$ICD==9,]
+good.codes9  <- unique(ICD9.data$Cause)[73:392]
 
-  
-  if (i == 1) {Deaths.cuba1 <- data.table(Deaths.f)
-  Deaths.cuba2 <- data.table(Deaths.m)
-    females <- Deaths.cuba1[,Complete.cuba(Female), by = list(Age2,Year)]
-    males   <- Deaths.cuba2[,Complete.cuba(Male), by = list(Age2,Year)]
-  Deaths.f$Female <- females$V1
-  Deaths.m$Male <- males$V1
-  }
-  
-  
-  # correct cuba, there are inconsistencies with subtotals and totals 
-  
-  ###Make sure the category 15 containd the sum 2:14 -1
-  yrs <- unique(Deaths.f$Year)
-  ages <- unique(unique(Deaths.f$Age2))
-  #k <- 0
-  #j <- 1990
-  for (k in ages){
-  for (j in yrs){
-  s1 <- (sum(Deaths.f[Deaths.f$Age2==k & Deaths.f$Year==j,][2:14,4]) + 
-           Deaths.f[Deaths.f$Age2==k & Deaths.f$Year==j,][15,4])
-  
-  s2 <- s1 - Deaths.f[Deaths.f$Age2==k & Deaths.f$Year==j,][1,4]
-  
-  s1.1 <- (sum(Deaths.m[Deaths.m$Age2==k & Deaths.m$Year==j,][2:14,4]) + 
-           Deaths.m[Deaths.m$Age2==k & Deaths.m$Year==j,][15,4])
-  
-  s2.1 <- s1.1 - Deaths.m[Deaths.m$Age2==k & Deaths.f$Year==j,][1,4]
-  
-  if (s2 != 0) print(c(k,s2,j))
-  if (s2.1 != 0) print(c(k,s2.1,j))
-  
-  }}
-  
-  
-  # add the code and name of the country to the dataset
-  Deaths.complete         <- Deaths.f
-  Deaths.complete$Male    <- Deaths.m$Male
-  Deaths.complete$X       <- Country.code.vec[i]
-  Deaths.complete$Country <- Country.name.vec[i]
-  
-  
-  # add a the label to the age, for consistency with the original files
-  code.age3                     <- c(97,0:4,seq(5,95,5),96)
-  # age2 is coded numerically, 96 is UNK and 97 is total
-  code.age4                    <- code.age
-  names(code.age4)             <- code.age3
-  Deaths.complete$Age          <- code.age4[as.character(Deaths.complete$Age2)]
-  
-  # go back to the original shape
-  Deaths.complete              <- Deaths.complete[,c('X','Year','Cause','Age','Female', 'Male', 'Country', 'Age2')]
-  Deaths.complete              <- Deaths.complete[with(Deaths.complete,order(Year,Age2,Cause)),]
-  
-  #store all countries in one dataset
-  print(Country.name.vec[i])
-  Deaths.data <- data.table(rbind(Deaths.data,Deaths.complete))
-}
+# Drop those code that do not have an A to avoid duplicates
+ICD9.data <-   ICD9.data[ICD9.data$Cause %in% good.codes9,]
 
-Deaths.data <- Deaths.data[with(Deaths.data, order(X,Year,Cause,Age2)),]
+########## Rest of bad codes
+ICD9.data$Cat <- 10
 
-ICD10.year            <- data.table(ICD10.year)
-ICD10.year$ICD10.Year <- as.numeric(ICD10.year$ICD10.Year)
-ICD10.year$Code       <- as.numeric(ICD10.year$Code)
-ICD10.year <- ICD10.year[with(ICD10.year, order(Code)),]
+########## category 1
+ICD9.data[ICD9.data$Cause %in% c(paste0('B0',1:7),paste0('B', 184:185)),]$Cat <- 1
 
-gdata:: keep (Deaths.data , ICD10.year,Country.name.vec,Country.code.vec, sure = T)
+########## category 2
+ICD9.data[ICD9.data$Cause %in% c(paste0('B0',90:94),'B08','B096','B100','B101','B120'),]$Cat <- 2
+
+########## category 3
+ICD9.data[ICD9.data$Cause %in% c(paste0('B',121:126),paste0('B',13:14),'B095','B099','B109','B11','B129'),]$Cat <- 3
+
+########## category 4
+ICD9.data[ICD9.data$Cause %in% c('B181'),]$Cat <- 4
+
+########## category 5
+ICD9.data[ICD9.data$Cause %in% c(paste0('B',25:30)),]$Cat <- 5
+
+########## category 6
+ICD9.data[ICD9.data$Cause %in% c(paste0('B',310:312),paste0('B',320:322)),]$Cat <- 6
+
+########## category 7
+ICD9.data[ICD9.data$Cause %in% c(paste0('B',313:315),paste0('B',323:327),'B319','B329'),]$Cat <- 7
+
+########## category 8
+ICD9.data[ICD9.data$Cause %in% c(paste0('B',47:56)),]$Cat <- 8
+
+########## category 9
+ICD9.data[ICD9.data$Cause %in% c(paste0('B',15:17), 'B180', paste0('B',182:183),'B189', paste0('B',19:23),paste0('B',33:46)),]$Cat <- 9
+unique(ICD9.data$Cat)
+unique(ICD9.data[ICD9.data$Cat==10,]$Cause)
+ICD9.data <- ICD9.data[ICD9.data$Cat!=10,]
+
+# ICD 10 classification ----------------------------------------------------
+
+ICD10.data      <- COD_Data[COD_Data$ICD==10,]
+#get only the first 3 digits of the cause of death
+sort(unique(ICD10.data$Cause))[2000:length(unique(ICD10.data$Cause))]
+ICD10.data$Cause2 <- substr(ICD10.data$Cause,1,3)
+ICD10.data$Cause3 <- substr(ICD10.data$Cause,4,4)
+sort(unique(ICD10.data$Cause2))
+sort(unique(ICD10.data$Cause3))
+
+# Exclude the cause A000, is all causes in documentation
+ICD10.data <- ICD10.data[ICD10.data$Cause != 'AAA',]
+
+# bad codes
+ICD10.data$Cat <- 10
+
+########## category 1
+ICD10.data[ICD10.data$Cause2 %in% c(paste0('A0',0:9),paste0('A', 10:99),
+                                   paste0('B0', 0:9),paste0('B', 10:89),paste0('B', 99)),]$Cat <- 1
+
+########## category 2
+ICD10.data[ICD10.data$Cause2 %in% c(paste0('C0',0:9),paste0('C',10:21),paste0('C',25),paste0('C',30:34),'C53'),]$Cat <- 2
+
+########## category 3
+ICD10.data[ICD10.data$Cause2 %in% c(paste0('C',22:24),paste0('C',37:39),paste0('C',40:41),paste0('C',43:52),paste0('C',54:58),
+                                   paste0('C',60:97)),]$Cat <- 3
+
+########## category 4
+ICD10.data[ICD10.data$Cause2 %in% c(paste0('E',10:14)),]$Cat <- 4
+
+########## category 5
+ICD10.data[ICD10.data$Cause2 %in% c(paste0('I0',0:9),paste0('I',10:99)),]$Cat <- 5
+
+########## category 6
+ICD10.data[ICD10.data$Cause2 %in% c(paste0('J0',0:6),paste0('J0',9),paste0('J',10:18),
+                                    paste0('J',20:22),'J85','J86','J36'),]$Cat <- 6
+ICD10.data[ICD10.data$Cause2=='J34' & ICD10.data$Cause3=='0',]$Cat <- 6
+ICD10.data[ICD10.data$Cause2=='J39' & ICD10.data$Cause3=='0',]$Cat <- 6
+ICD10.data[ICD10.data$Cause2=='J39' & ICD10.data$Cause3=='1',]$Cat <- 6
+
+########## category 7
+ICD10.data[ICD10.data$Cause2 %in% c(paste0('J',30:33),'J35','J37','J38',paste0('J',40:47),paste0('J',60:70),paste0('J',c(80,81,82)),
+                                    paste0('J',90:99)),]$Cat <- 7
+ICD10.data[ICD10.data$Cause2=='J34' & ICD10.data$Cause3=='1',]$Cat <- 7
+ICD10.data[ICD10.data$Cause2=='J34' & ICD10.data$Cause3=='2',]$Cat <- 7
+ICD10.data[ICD10.data$Cause2=='J34' & ICD10.data$Cause3=='3',]$Cat <- 7
+ICD10.data[ICD10.data$Cause2=='J34' & ICD10.data$Cause3=='8',]$Cat <- 7
+ICD10.data[ICD10.data$Cause2=='J39' & ICD10.data$Cause3=='2',]$Cat <- 7
+ICD10.data[ICD10.data$Cause2=='J39' & ICD10.data$Cause3=='3',]$Cat <- 7
+ICD10.data[ICD10.data$Cause2=='J39' & ICD10.data$Cause3=='8',]$Cat <- 7
+ICD10.data[ICD10.data$Cause2=='J39' & ICD10.data$Cause3=='9',]$Cat <- 7
+
+ICD10.data[ICD10.data$Cause2=='J84' & ICD10.data$Cause3=='0',]$Cat <- 7
+ICD10.data[ICD10.data$Cause2=='J84' & ICD10.data$Cause3=='1',]$Cat <- 7
+
+ICD10.data[ICD10.data$Cause2=='J84' & ICD10.data$Cause3=='8',]$Cat <- 7
+ICD10.data[ICD10.data$Cause2=='J84' & ICD10.data$Cause3=='9',]$Cat <- 7
+
+########## category 8
+ICD10.data[ICD10.data$Cause2 %in% c(paste0('S0',0:9),paste0('T0',0:9),paste0('S',10:99),paste0('T',10:89),
+                                    paste0('V',10:99),paste0('V0',1:9),
+                                    paste0('W',10:99),paste0('W0',0:9),
+                                    paste0('X',10:99),paste0('X0',0:9),
+                                    paste0('Y',10:89),paste0('Y0',0:9)),]$Cat <- 8
+
+
+########## Rest causes (category 9)
+ICD10.data[ICD10.data$Cause2 %in% c(paste0('D0',0:9),paste0('D',10:48),paste0('D',50:89),
+                                    paste0('E0',0:7),paste0('E',15:16),paste0('E',20:35),paste0('E',40:46),
+                                    paste0('E',50:68),paste0('E',70:90),
+                                    paste0('F0',0:9),paste0('F',10:99),
+                                    paste0('G0',0:9),paste0('G',10:99),
+                                    paste0('H0',0:9),paste0('H',10:59),paste0('H',60:95),
+                                    paste0('K0',0:9),paste0('K',10:93),
+                                    paste0('L0',0:9),paste0('L',10:99),
+                                    paste0('M0',0:9),paste0('M',10:99),
+                                    paste0('N0',0:9),paste0('N',10:99),
+                                    paste0('O0',0:9),paste0('O',10:99),
+                                    paste0('P0',0:9),paste0('P',10:96),
+                                    paste0('Q0',0:9),paste0('Q',10:99),
+                                    paste0('R0',0:9),paste0('R',10:99)),]$Cat <- 9
+unique(ICD10.data$Cat)
+
+##### Discard bad codes
+check <- ICD10.data[ICD10.data$Cat==10,]
+sort(unique(check$Cause))
+
+ICD10.data <- ICD10.data[ICD10.data$Cat!=10,]
+
+ICD10.data <- ICD10.data[,-c('Cause2','Cause3')]
+
+# Get all ICDs together ---------------------------------------------------
+DT_COD <- rbind(ICD7.data,ICD8.data,ICD9.data,ICD10.data)
+
+gdata::keep(DT_COD, sure = T)
+
+
+##### Now play with ages
+unique(DT_COD$Frmat)
+
+# groups ages 1:4 for format 0
+DT_COD.0       <- DT_COD[DT_COD$Frmat == 0,]
+DT_COD.0$A_1_4 <- DT_COD.0$Deaths3 + DT_COD.0$Deaths4 + DT_COD.0$Deaths5 + DT_COD.0$Deaths6
+
+# groups ages 1:4 for format 1
+DT_COD.1       <- DT_COD[DT_COD$Frmat == 1,]
+DT_COD.1$A_1_4 <- DT_COD.1$Deaths3 + DT_COD.1$Deaths4 + DT_COD.1$Deaths5 + DT_COD.1$Deaths6
+
+# groups ages 1:4 for format 2
+DT_COD.2       <- DT_COD[DT_COD$Frmat == 2,]
+DT_COD.2$A_1_4 <- DT_COD.2$Deaths3
+
+# rbind the 2 datasets
+DT_COD <- rbind(DT_COD.0,DT_COD.1,DT_COD.2)
+
+#reduce to variables needed (age < 85), until Deaths22 
+DT_COD           <- DT_COD[,c('Country','Country.name', 'ICD', 'Year', 'Sex', 'Cat', 'Deaths1', 'Deaths2', 'A_1_4', paste0('Deaths',7:22))]
+colnames(DT_COD) <- c('Country','Country.name', 'ICD', 'Year', 'Sex', 'Cat','Total',as.character(c(0,1,seq(5,80,5))))
+DT_COD           <- DT_COD[with(DT_COD,order(Country,Sex,Year,Cat))]
+
+DT_COD.melt      <- melt(DT_COD, id.vars = c('Country','Country.name', 'ICD','Year','Sex','Cat'), variable.name = 'Age',value.name = 'Dx')
+
+
+### Get total deaths by age, sex, category, year.
+DT_COD.melt      <- DT_COD.melt[, list(Dx=sum(Dx)), by =  list(Country,Country.name,ICD,Year,Sex,Age,Cat)]
+
+### get proportions of causes of death by age
+DT_COD.melt      <- DT_COD.melt[DT_COD.melt$Age != 'Total',]
+
+DT_COD.melt      <- DT_COD.melt[, Dx.p := Dx/sum(Dx), by = list(Country,Country.name,ICD,Year,Sex,Age)]
+
+save(DT_COD.melt,file= 'Data/DT_COD.RData')
 

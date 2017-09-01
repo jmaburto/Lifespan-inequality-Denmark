@@ -1,6 +1,22 @@
-# Functions needed for 'Life expectancy and equality: a long run relationship'
 
-# Some useful fucntions: for ax and life table
+Age.labels <- c('Total', '0', '1-4', '5-9', '10-14','15-19','20-24','25-29',
+  '30-34','35-39','40-44','45-49','50-54','55-59','60-64','65-69',
+  '70-74','75-79','80-84')
+
+Category.labels <- c(
+  'Infectious, non-R',
+  'Cancer AS',
+  'Cancer NAS',
+  'Diabetes',
+  'Cardiovascular',
+  'Respiratory I',
+  'Respiratory NI',
+  'External',
+  'Other')
+
+
+
+
 AKm02a0        <- function(m0, sex = "m"){
   sex <- rep(sex, length(m0))
   ifelse(sex == "m", 

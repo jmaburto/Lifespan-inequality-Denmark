@@ -2,7 +2,7 @@
 
 library(HMDHFDplus)
 library(data.table)
-setwd("C:/Users/jmaburto/Documents/GitHub/Lifespan-inequality-in-Denmark")
+setwd("C:/Users/jmaburto/Documents/GitHub/Lifespan-inequality-Denmark")
 
 XYZ <- getHMDcountries()
 us <- "jmaburto@colmex.mx"
