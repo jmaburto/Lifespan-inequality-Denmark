@@ -39,10 +39,10 @@ unique(COD_Data$List)
 
 ICD7.data <- COD_Data[COD_Data$ICD==7,]
 
-# Drop those code that do not have an A to avoid duplicates
-bad.codes <-   unique(ICD7.data$Cause)[152:length(unique(ICD7.data$Cause))]
-bad.codes <- c(bad.codes[!(bad.codes %in% c(155,156,158,159,160,164,165,175,176,178,179,180,181,192,193,194,195,198,199))], 'A057')
-ICD7.data <-   ICD7.data[!(ICD7.data$Cause %in% bad.codes),]
+# # Drop those code that do not have an A to avoid duplicates
+# bad.codes <-   unique(ICD7.data$Cause)[152:length(unique(ICD7.data$Cause))]
+# bad.codes <- c(bad.codes[!(bad.codes %in% c(155,156,158,159,160,164,165,175,176,178,179,180,181,192,193,194,195,198,199))], 'A057')
+# ICD7.data <-   ICD7.data[!(ICD7.data$Cause %in% bad.codes),]
 
 # Exclude the cause A000, is all causes in documentation
 ICD7.data <- ICD7.data[ICD7.data$Cause != 'A000']
@@ -54,12 +54,12 @@ ICD7.data$Cat <- 10
 ICD7.data[ICD7.data$Cause %in% c(paste0('A00',1:9),paste0('A0', 10:43)),]$Cat <- 1
 
 ########## category 2
-ICD7.data[ICD7.data$Cause %in% c(paste0('A0',44:50),'A052','157'),]$Cat <- 2
+ICD7.data[ICD7.data$Cause %in% c(paste0('A0',44:50),'A052','157','180','181'),]$Cat <- 2
 
 ########## category 3
 ICD7.data[ICD7.data$Cause %in% c(paste0('A0',53:56),'A051','A058','A059',
                                  '155','156','158','159','160','164','165','175','176','178','179',
-                                 '180','181','192','193','194','195','198','199'),]$Cat <- 3
+                                 '192','193','194','195','198','199'),]$Cat <- 3
 
 ########## category 4
 ICD7.data[ICD7.data$Cause %in% c('A063'),]$Cat <- 4
@@ -82,16 +82,16 @@ ICD7.data[ICD7.data$Cause %in% c(paste0('A0',60:62),paste0('A0',64:69),
                                  paste0('A0',71:78),paste0('A0',98:99),
                                  paste0('A',100:137)),]$Cat <- 9
 unique(ICD7.data$Cat)
-
+ICD7.data <- ICD7.data[ICD7.data$Cat < 10,]
 
 # ICD 8 classification ----------------------------------------------------
 
 ICD8.data    <- COD_Data[COD_Data$ICD==8,]
-good.codes8  <- unique(ICD8.data$Cause)[178:327]
-good.codes8  <- good.codes8[good.codes8!='A058']
-good.codes8  <- c(good.codes8, as.character(c(155,156,158,159,160,163,171,183,184,186:199,157)))
-# Drop those code that do not have an A to avoid duplicates
-ICD8.data <-   ICD8.data[ICD8.data$Cause %in% good.codes8,]
+# good.codes8  <- unique(ICD8.data$Cause)[178:327]
+# good.codes8  <- good.codes8[good.codes8!='A058']
+# good.codes8  <- c(good.codes8, as.character(c(155,156,158,159,160,163,171,183,184,186:199,157)))
+# # Drop those code that do not have an A to avoid duplicates
+# ICD8.data <-   ICD8.data[ICD8.data$Cause %in% good.codes8,]
 
 ########## Bad codes
 ICD8.data$Cat <- 10
@@ -101,12 +101,12 @@ ICD8.data$Cat <- 10
 ICD8.data[ICD8.data$Cause %in% c(paste0('A00',1:9),paste0('A0', 10:44)),]$Cat <- 1
 
 ########## category 2
-ICD8.data[ICD8.data$Cause %in% c(paste0('A0',45:51),'A055','157'),]$Cat <- 2
+ICD8.data[ICD8.data$Cause %in% c(paste0('A0',45:51),'A055','157','188','189'),]$Cat <- 2
 
 ########## category 3
 ICD8.data[ICD8.data$Cause %in% c(paste0('A0',52:54),paste0('A0',56:57),
                                  paste0('A0',59:60),
-                                 as.character(c(155,156,158,159,160,163,171,183,184,186:199))),]$Cat <- 3
+                                 as.character(c(155,156,158,159,160,163,171,183,184,186,187,190:199))),]$Cat <- 3
 
 ########## category 4
 ICD8.data[ICD8.data$Cause %in% c('A064'),]$Cat <- 4
@@ -129,16 +129,17 @@ ICD8.data[ICD8.data$Cause %in% c(paste0('A0',61:63),paste0('A0',65:79),
                                  paste0('A0',97:99),paste0('A',100:137)),]$Cat <- 9
 
 unique(ICD8.data$Cat)
+ICD8.data <- ICD8.data[ICD8.data$Cat < 10,]
 
 
 
 # ICD 9 classification ----------------------------------------------------
 
 ICD9.data    <- COD_Data[COD_Data$ICD==9,]
-good.codes9  <- unique(ICD9.data$Cause)[73:392]
+#good.codes9  <- unique(ICD9.data$Cause)[73:392]
 
 # Drop those code that do not have an A to avoid duplicates
-ICD9.data <-   ICD9.data[ICD9.data$Cause %in% good.codes9,]
+#ICD9.data <-   ICD9.data[ICD9.data$Cause %in% good.codes9,]
 
 ########## Rest of bad codes
 ICD9.data$Cat <- 10
@@ -147,10 +148,11 @@ ICD9.data$Cat <- 10
 ICD9.data[ICD9.data$Cause %in% c(paste0('B0',1:7),paste0('B', 184:185)),]$Cat <- 1
 
 ########## category 2
-ICD9.data[ICD9.data$Cause %in% c(paste0('B0',90:94),'B08','B096','B100','B101','B120'),]$Cat <- 2
+ICD9.data[ICD9.data$Cause %in% c(paste0('B0',90:94),'B08','B096','B100','B101','180','188','189'),]$Cat <- 2
 
 ########## category 3
-ICD9.data[ICD9.data$Cause %in% c(paste0('B',121:126),paste0('B',13:14),'B095','B099','B109','B11','B129'),]$Cat <- 3
+ICD9.data[ICD9.data$Cause %in% c(paste0('B',121:126),paste0('B',13:14),'B095','B099','B109','B11','B13','B14', '179', '181',
+                                 '182','183','184','185','186','187'),]$Cat <- 3
 
 ########## category 4
 ICD9.data[ICD9.data$Cause %in% c('B181'),]$Cat <- 4
@@ -194,11 +196,12 @@ ICD10.data[ICD10.data$Cause2 %in% c(paste0('A0',0:9),paste0('A', 10:99),
                                    paste0('B0', 0:9),paste0('B', 10:89),paste0('B', 99)),]$Cat <- 1
 
 ########## category 2
-ICD10.data[ICD10.data$Cause2 %in% c(paste0('C0',0:9),paste0('C',10:21),paste0('C',25),paste0('C',30:34),'C53'),]$Cat <- 2
+ICD10.data[ICD10.data$Cause2 %in% c(paste0('C0',0:9),paste0('C',10:21),paste0('C',25),paste0('C',30:34),'C53',
+                                    paste0('C',64:68)),]$Cat <- 2
 
 ########## category 3
-ICD10.data[ICD10.data$Cause2 %in% c(paste0('C',22:24),paste0('C',37:39),paste0('C',40:41),paste0('C',43:52),paste0('C',54:58),
-                                   paste0('C',60:97)),]$Cat <- 3
+ICD10.data[ICD10.data$Cause2 %in% c(paste0('C',22:24),'C26',paste0('C',37:39),paste0('C',40:41),paste0('C',43:52),paste0('C',54:58),
+                                   paste0('C',60:93),paste0('C',69:97)),]$Cat <- 3
 
 ########## category 4
 ICD10.data[ICD10.data$Cause2 %in% c(paste0('E',10:14)),]$Cat <- 4

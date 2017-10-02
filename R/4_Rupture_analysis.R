@@ -41,7 +41,7 @@ change.ICD$ICD    <- c('ICD 8', 'ICD 10')
 
 f1 <- ggplot(Prop.data, aes(Year,Dx))+
   ggtitle('Denmark',subtitle = 'Years of change in ICDs: 1969 and 1994')+
-  geom_line(aes(colour = Sex), lwd=1,show.legend =T)+
+  geom_line(aes(colour = Sex), lwd=1,show.legend =T)+theme_light()+
   geom_point(aes(colour = Sex), lwd=1,show.legend =F)+
   theme(text = element_text(size=20))+
   facet_wrap(~Cat,scales = "free",ncol = 3)+ xlim(c(1960, 2014))+
@@ -64,7 +64,7 @@ change.ICD$ICD    <- c('ICD 8', 'ICD 9', 'ICD 10')
 
 f2 <- ggplot(Prop.data, aes(Year,Dx))+
   ggtitle('Sweden',subtitle = 'Years of change in ICDs: 1969, 1987 and 1997')+
-  geom_line(aes(colour = Sex), lwd=1,show.legend =T)+
+  geom_line(aes(colour = Sex), lwd=1,show.legend =T)+theme_light()+
   geom_point(aes(colour = Sex), lwd=1,show.legend =F)+
   theme(text = element_text(size=20))+
   facet_wrap(~Cat,scales = "free",ncol = 3)+ xlim(c(1960, 2015))+
@@ -90,7 +90,7 @@ change.ICD$ICD    <- c('ICD 8', 'ICD 9', 'ICD 10')
 
 f3 <- ggplot(Prop.data, aes(Year,Dx))+
   ggtitle('Norway', subtitle = 'Years of change in ICDs: 1969, 1986 and 1996')+
-  geom_line(aes(colour = Sex), lwd=1,show.legend =T)+
+  geom_line(aes(colour = Sex), lwd=1,show.legend =T)+theme_light()+
   geom_point(aes(colour = Sex), lwd=1,show.legend =F)+
   theme(text = element_text(size=20))+
   facet_wrap(~Cat,scales = "free",ncol = 3)+ xlim(c(1960, 2015))+
@@ -100,6 +100,7 @@ f3 <- ggplot(Prop.data, aes(Year,Dx))+
                  colour = ICD),
              show.legend = T)+
   theme(legend.title=element_blank())+
+  
   coord_fixed(1.5)
 
 
