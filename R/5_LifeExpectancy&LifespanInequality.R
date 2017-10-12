@@ -1,5 +1,5 @@
 
-rm(list=ls(all=TRUE))
+#rm(list=ls(all=TRUE))
 library(data.table)
 library(reshape2)
 library(ggplot2)
@@ -14,7 +14,7 @@ unique(HMD$PopName)
 Countries <- c('DNK', 'SWE', 'NOR')
 
 Data <- HMD[HMD$PopName %in% Countries,]
-gdata::keep(Data,Countries,sure=T)
+#gdata::keep(Data,Countries,sure=T)
 
 
 source('R/Functions_1.R')

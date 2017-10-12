@@ -16,7 +16,7 @@ Category.labels <- c(
 
 
 e0frommxc <- function(mxcvec,sex){
-  dim(mxcvec) <- c(24,length(mxcvec)/24)
+  dim(mxcvec) <- c(111,length(mxcvec)/111)
   mx          <- rowSums(mxcvec)
   LifeExpectancy(mx,sex)
 }
@@ -45,9 +45,15 @@ cv.frommx <- function(mx,sex='f'){
 }
 
 cvfrommxc <- function(mxcvec = c(m1),sex){
-  dim(mxcvec) <- c(24,length(mxcvec)/24)
+  dim(mxcvec) <- c(111,length(mxcvec)/111)
   mx          <- rowSums(mxcvec)
   cv.frommx(mx,sex)
+}
+
+COD.decomp <- function(.SD){
+  sex <- .SD$Sex[1]
+  
+  
 }
 
 
@@ -140,29 +146,22 @@ Decomp <-function (func, rates1, rates2, N, ...) {
   return(rowSums(cc))
 }
 
-# A function to make colors transparent
-makeTransparent <- function(someColor, alpha=100){
-  newColor<-col2rgb(someColor)
-  apply(newColor, 2, function(curcoldata){rgb(red=curcoldata[1], green=curcoldata[2],
-                                              blue=curcoldata[3],alpha=alpha, maxColorValue=255)})
+
+my_reshape.function <- function(i=names(x)[1],DecompIn=x){
+  
+  Z        <- DecompIn[[i]]
+  Z.names  <- names(Z)
+  ZZ        <- lapply(Z.names, function(ii,Z,i){
+    Z2      <- Z[[as.character(ii)]]
+    XX      <- cbind(Country=as.integer(i),year=as.integer(ii),age=0:110,Z2)
+    XX
+  }, Z = Z,i=i)
+  # now stick it together
+  D        <- as.data.frame(do.call(rbind, ZZ))
+  D        <- data.table(D)
+  #DT       <- as.data.table(melt(D, 
+  #                               id.vars = list("state","year","age"),
+  #                               variable.name = "Cause"))
+  D
 }
-
-### Some functions to create evaluating graphs
-
-# A function that returns the year range of the differences according to the lag
-Y <- function(Year,lag.2){  
-  seq(min(Year),max(Year)-lag.2,1)
-}
-
-# Some graphical settings
-my.settings1 <- list(  
-  strip.background=list(col="grey"),
-  strip.border=list(col="black")  
-)
-
-my.settings2 <- list(  
-  strip.background=list(col="grey"),
-  strip.border=list(col="black")
-  ,axis.line=list(col=c(0))
-)
 
