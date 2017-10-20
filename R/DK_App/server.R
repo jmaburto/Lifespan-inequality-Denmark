@@ -32,19 +32,10 @@ getTable.function <- function(Data = DT.Decomp.ex,state = state.ind,initial = in
   
   DT.out              <-  Data.1[, list(Contribution = sum(Contribution)), by = list(Country,Sex,Cause)]
   total               <- DT.out[,list(Contribution= sum(Contribution)),by = list(Country,Sex)]
-  total$Cause         <- '10'
+  total$Cause         <- 'Total'
   total               <- total[,c('Country','Sex','Cause','Contribution')]
   DT.out              <- rbind(DT.out,total) 
-  levels(DT.out$Cause) <- c(
-    'Infectious, non-R',
-    'Cancer AS',
-    'Cancer NAS',
-    'Diabetes',
-    'Cardiovascular',
-    'Respiratory I',
-    'Respiratory NI',
-    'External',
-    'Other','Total')
+  
   DT.out
 }
 
@@ -105,12 +96,12 @@ shinyServer(
       
       Data.fig   <- Data[Data$Year >= initial.ind & Data$Year < final.ind & Data$Country == state.ind, ]
       Data.fig   <- Data.fig[, list(Contribution = sum(Contribution)), by = list(Country,Sex,Cause,Age)] 
-      #Data.fig        <- Data.fig[Data.fig$Age!= '0-4',]
+      #Data.fig        <- Data.fig[Data.fig$Age!= '0',]
       
       Total.Age <- Data.fig[,sum(Contribution), by = list(Age,Sex)]
       Total.Age$V1 <- round(Total.Age$V1,2)
 
-      base2 <- c(rev(brewer.pal(8,name = 'Spectral'))[1:5],rev(brewer.pal(8,name = 'Spectral'))[8],rev(brewer.pal(8,name = 'Spectral'))[7],'blue', 'lightgrey')
+      base2 <- c(rev(brewer.pal(8,name = 'Spectral'))[1:5],rev(brewer.pal(8,name = 'Spectral'))[8],'lightgrey','lightpink')
       Data.fig$Contribution <- round(Data.fig$Contribution,2)
       p <- ggplot(Data.fig, aes(x = Age, y = Contribution, fill = Cause)) +
         ggtitle('Decomposition of life expectancy (years)', subtitle = paste0(state.ind,', ', initial.ind,'-',final.ind))+
@@ -147,10 +138,10 @@ shinyServer(
       Total.Age <- Data.fig[,sum(Contribution), by = list(Age,Sex)]
       Total.Age$V1 <- Total.Age$V1
       
-      base2 <- c(rev(brewer.pal(8,name = 'Spectral'))[1:5],rev(brewer.pal(8,name = 'Spectral'))[8],rev(brewer.pal(8,name = 'Spectral'))[7],'blue', 'lightgrey')
+      base2 <- c(rev(brewer.pal(8,name = 'Spectral'))[1:5],rev(brewer.pal(8,name = 'Spectral'))[8],'lightgrey','lightpink')
       Data.fig$Contribution <- Data.fig$Contribution
       q <- ggplot(Data.fig, aes(x = Age, y = Contribution, fill = Cause)) +
-        ggtitle('Decomposition of lifespan inequality (years)', subtitle = paste0(state.ind,', ', initial.ind,'-',final.ind))+
+        ggtitle('Decomposition of lifespan inequality', subtitle = paste0(state.ind,', ', initial.ind,'-',final.ind))+
         facet_wrap(~Sex)+
         scale_fill_manual('Cause of death', values = base2) + 
         geom_bar(stat = "identity",position = "stack")+
@@ -182,7 +173,7 @@ shinyServer(
       
       Data.fig   <- Data[Data$Year == Yr & Data$Country == state.ind, ]
       
-      base2 <- c(rev(brewer.pal(8,name = 'Spectral'))[1:5],rev(brewer.pal(8,name = 'Spectral'))[8],rev(brewer.pal(8,name = 'Spectral'))[7],'blue', 'lightgrey')
+      base2 <- c(rev(brewer.pal(8,name = 'Spectral'))[1:5],rev(brewer.pal(8,name = 'Spectral'))[8],'lightgrey','lightpink')
       Data.fig$Contribution <- Data.fig$Contribution
       q <- ggplot(Data.fig, aes(x = Age, y = Contribution, fill = Cause)) +
         ggtitle('Decomposition of life expectancy (years)', subtitle = paste0(state.ind,'vs Sweden, ', Yr))+
@@ -214,11 +205,11 @@ shinyServer(
       Data.fig   <- Data[Data$Year == Yr & Data$Country == state.ind, ]
       
       
-      base2 <- c(rev(brewer.pal(8,name = 'Spectral'))[1:5],rev(brewer.pal(8,name = 'Spectral'))[8],rev(brewer.pal(8,name = 'Spectral'))[7],'blue', 'lightgrey')
+      base2 <- c(rev(brewer.pal(8,name = 'Spectral'))[1:5],rev(brewer.pal(8,name = 'Spectral'))[8],'lightgrey','lightpink')
       Data.fig$Contribution <- -Data.fig$Contribution
       
       q <- ggplot(Data.fig, aes(x = Age, y = Contribution, fill = Cause)) +
-        ggtitle('Decomposition of lifespan inequality (years)', subtitle = paste0(state.ind,'vs Sweden, ', Yr))+
+        ggtitle('Decomposition of lifespan inequality', subtitle = paste0(state.ind,'vs Sweden, ', Yr))+
         facet_wrap(~Sex)+
         scale_fill_manual('Cause of death', values = base2) + 
         geom_bar(stat = "identity",position = "stack")+
@@ -238,7 +229,7 @@ shinyServer(
     })
     
     output$mytable = renderDataTable({
-      
+    
       state.ind   <- input$state.ind
       initial.ind <- input$initial.ind
       final.ind   <- input$final.ind
@@ -371,6 +362,30 @@ shinyServer(
       
       
       datatable(DT.out, options = list(paging=FALSE,ordering=T, dom = 't'),rownames = F,caption = 'Difference with Sweden')
+    })
+    
+    output$early <- renderPlotly({
+      #years <- 2014
+      years     <- input$year.compare
+      Data2       <- ASMR[ASMR$Year == years,]
+      Data2$mx    <- round(Data2$mx,4)
+      Data2$Sex   <- as.factor(Data2$Sex)
+      levels(Data2$Sex) <- c('Females', 'Males')
+      Data2$PopName   <- as.factor(Data2$PopName)
+      levels(Data2$PopName) <- c('Denmark', 'Norway', 'Sweden')
+      
+      p <-ggplot(Data2, aes(x = Age,y = mx,colour=(PopName))) +
+        ggtitle('ASMR') +
+        geom_line(aes(group = PopName), size= 1) +
+        facet_wrap(~Sex)+
+        theme_light()+
+        labs(y = "Years")+
+        scale_colour_manual('Country', values = c('blue', 'green', 'red')) + 
+        theme(text = element_text(size=14),
+              strip.text.x = element_text(size = 14, colour = "black"))
+      #p
+      print(ggplotly(p,width = 1350, height = 400))
+      
     })
     
     

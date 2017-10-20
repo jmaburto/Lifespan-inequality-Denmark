@@ -3,16 +3,16 @@ library(data.table)
 library(reshape2)
 
 setwd("C:/Users/jmaburto/Documents/GitHub/Lifespan-inequality-Denmark")
-# 1. 'Infectious, non-R',
-# 2. 'Cancer AS',
-# 3. 'Cancer NAS',
-# 4. 'Diabetes',
-# 5. 'Cardiovascular',
-# 6. 'Respiratory I',
-# 7. 'Respiratory NI',
-# 8. 'External',
-# 9. 'Other'
-#
+
+#2  Cancer, amenable to smoking
+#3  Cancer, not amenable to smoking
+#5  Cardiovascular & Diabetes mellitus (move to 5)
+#6  Respiratory, infectious
+#7  Respiratory, non-infectious
+#8  External
+#9  Other & Infectious, non-respiratory
+
+
 
 #load data
 HMD       <- get(load('Data/HMD_Data.RData'))
@@ -48,7 +48,7 @@ sexes     <- unique(mx.COD.cast$Sex)
 years     <- unique(mx.COD.cast$Year)
 countries <- unique(mx.COD.cast$Country.name)
 ages      <- sort(unique(mx.COD.cast$Age))
-causes    <- colnames(mx.COD.cast)[5:13]
+causes    <- colnames(mx.COD.cast)[5:11]
 Empty     <- matrix(0,nrow = length(ages),ncol = length(causes),dimnames = list(ages,causes))
 
 # get matrices in lists to do faster the calculation

@@ -10,16 +10,14 @@ setwd("C:/Users/jmaburto/Documents/GitHub/Lifespan-inequality-Denmark")
 # Run this line to update the COD RData file
 get(load('Data/DT_COD.RData'))
 source('R/Functions_1.R')
-#1  Contagious, non-respiratory
-#2  Tentatively opportunistic infections
-#3  Cancer, amenable to smoking
-#4  Cancer, not amenable to smoking
-#5  Diabetes mellitus
-#6  Cardiovascular
-#7  Respiratory, infectious
-#8  Respiratory, non-infectious
-#9  External
-#10 Other
+
+#2  Cancer, amenable to smoking
+#3  Cancer, not amenable to smoking
+#5  Cardiovascular & Diabetes mellitus (move to 5)
+#6  Respiratory, infectious
+#7  Respiratory, non-infectious
+#8  External
+#9  Other & Infectious, non-respiratory
 
 #rename categories, sexes and Age_groups
 

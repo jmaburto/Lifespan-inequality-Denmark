@@ -4,13 +4,11 @@ Age.labels <- c('Total', '0', '1-4', '5-9', '10-14','15-19','20-24','25-29',
   '70-74','75-79','80-84')
 
 Category.labels <- c(
-  'Infectious, non-R',
-  'Cancer AS',
-  'Cancer NAS',
-  'Diabetes',
+  'Smoking related cancer',
+  'Non-Smoking related cancer',
   'Cardiovascular',
-  'Respiratory I',
-  'Respiratory NI',
+  'Respiratory-Infectious',
+  'Respiratory-Non-infectious',
   'External',
   'Other')
 

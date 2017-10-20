@@ -22,8 +22,8 @@ library(plotly)
     fluidPage(
       titlePanel('Lifespan inequality in Denmark, Sweden and Norway'),
       navbarPage(
-        'Aburto JM, Wensink M, Vaupel JW & Lindahl-Jacobsen R.  "Lifespan inequality in Denmark, Sweden and Norway: the inter-war female generations". 
-        Max Planck Center on the Biodemography of Aging, 2017',
+        'Aburto JM, Wensink M, Vaupel JW & Lindahl-Jacobsen R.  "Potential gains in life expectancy by reducing lifespan inequality in Denmark". 
+        Max Planck Center on the Biodemography of Aging, SDU, 2017',
         position = c("fixed-bottom")),
       
       sidebarLayout(
@@ -54,14 +54,16 @@ library(plotly)
         tabPanel("Decomposition results",
                  plotlyOutput("e0.decomp"),
                  plotlyOutput("ed.decomp")),
-        tabPanel("Comparison with Sweden",
-                 plotlyOutput("ex.compare"),
-                 plotlyOutput("cv.compare"),
-                 p('Positive (negative) values increase (decrease) the gap in life expectancy and lifespan equality with Sweden')),
         tabPanel("Cause-specific summary",
                  fluidRow(h3(textOutput('text4')),
                           column(6, dataTableOutput("mytable2")),
-                          column(6, dataTableOutput("mytable"))))
+                          column(6, dataTableOutput("mytable")))),
+        tabPanel("Comparison with Sweden",
+                 plotlyOutput("ex.compare"),
+                 plotlyOutput("cv.compare"),
+                 p('Positive (negative) values increase (decrease) the gap in life expectancy and lifespan inequality with Sweden')),
+        tabPanel("Early life ASMR",
+                 plotlyOutput("early"))
         
         )
         )

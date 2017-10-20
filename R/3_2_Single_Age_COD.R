@@ -2,6 +2,7 @@
 library(ggplot2)
 library(data.table)
 library(reshape2)
+#library(parallelsugar)
 
 setwd("C:/Users/jmaburto/Documents/GitHub/Lifespan-inequality-Denmark")
 # 1. 'Infectious, non-R',
@@ -27,4 +28,4 @@ source('R/Functions_Rizzi.R')
 # get single age COD for everything
 Single_COD <- Data[, list(Dx=Single_COD_fun(Dx), Age=0:110), by = list(Country,Country.name,ICD,Year,Sex,Cat)]
 save(Single_COD, file = 'Data/Single_COD.RData')
-
+gc()

@@ -1,7 +1,5 @@
 ###############################################################################
 ### Get CoD data for Denmark, Sweden and Norway. Source: WHO (07/07/2017)     #
-
-
 library(data.table)
 library(reshape2)
 
@@ -23,15 +21,13 @@ unique(COD_Data$List)
 #Classification made by Marteen (10 categories), if soesn't work regroup to 
 # He provided the bridged codes
 
-#1  Infectious, non-respiratory
 #2  Cancer, amenable to smoking
 #3  Cancer, not amenable to smoking
-#4  Diabetes mellitus
-#5  Cardiovascular
+#5  Cardiovascular & Diabetes mellitus (move to 5)
 #6  Respiratory, infectious
 #7  Respiratory, non-infectious
 #8  External
-#9  Other
+#9  Other & Infectious, non-respiratory
 
 
 # ICD 7 classification ----------------------------------------------------
@@ -51,7 +47,7 @@ ICD7.data <- ICD7.data[ICD7.data$Cause != 'A000']
 ICD7.data$Cat <- 10
 
 ########## category 1
-ICD7.data[ICD7.data$Cause %in% c(paste0('A00',1:9),paste0('A0', 10:43)),]$Cat <- 1
+ICD7.data[ICD7.data$Cause %in% c(paste0('A00',1:9),paste0('A0', 10:43)),]$Cat <- 9
 
 ########## category 2
 ICD7.data[ICD7.data$Cause %in% c(paste0('A0',44:50),'A052','157','180','181'),]$Cat <- 2
@@ -62,7 +58,7 @@ ICD7.data[ICD7.data$Cause %in% c(paste0('A0',53:56),'A051','A058','A059',
                                  '192','193','194','195','198','199'),]$Cat <- 3
 
 ########## category 4
-ICD7.data[ICD7.data$Cause %in% c('A063'),]$Cat <- 4
+ICD7.data[ICD7.data$Cause %in% c('A063'),]$Cat <- 5
 
 ########## category 5
 ICD7.data[ICD7.data$Cause %in% c('A070',paste0('A0',79:86)),]$Cat <- 5
@@ -98,7 +94,7 @@ ICD8.data$Cat <- 10
 
 
 ########## category 1
-ICD8.data[ICD8.data$Cause %in% c(paste0('A00',1:9),paste0('A0', 10:44)),]$Cat <- 1
+ICD8.data[ICD8.data$Cause %in% c(paste0('A00',1:9),paste0('A0', 10:44)),]$Cat <- 9
 
 ########## category 2
 ICD8.data[ICD8.data$Cause %in% c(paste0('A0',45:51),'A055','157','188','189'),]$Cat <- 2
@@ -109,7 +105,7 @@ ICD8.data[ICD8.data$Cause %in% c(paste0('A0',52:54),paste0('A0',56:57),
                                  as.character(c(155,156,158,159,160,163,171,183,184,186,187,190:199))),]$Cat <- 3
 
 ########## category 4
-ICD8.data[ICD8.data$Cause %in% c('A064'),]$Cat <- 4
+ICD8.data[ICD8.data$Cause %in% c('A064'),]$Cat <- 5
 
 ########## category 5
 ICD8.data[ICD8.data$Cause %in% c(paste0('A0',80:88)),]$Cat <- 5
@@ -145,7 +141,7 @@ ICD9.data    <- COD_Data[COD_Data$ICD==9,]
 ICD9.data$Cat <- 10
 
 ########## category 1
-ICD9.data[ICD9.data$Cause %in% c(paste0('B0',1:7),paste0('B', 184:185)),]$Cat <- 1
+ICD9.data[ICD9.data$Cause %in% c(paste0('B0',1:7),paste0('B', 184:185)),]$Cat <- 9
 
 ########## category 2
 ICD9.data[ICD9.data$Cause %in% c(paste0('B0',90:94),'B08','B096','B100','B101','180','188','189'),]$Cat <- 2
@@ -155,7 +151,7 @@ ICD9.data[ICD9.data$Cause %in% c(paste0('B',121:126),paste0('B',13:14),'B095','B
                                  '182','183','184','185','186','187'),]$Cat <- 3
 
 ########## category 4
-ICD9.data[ICD9.data$Cause %in% c('B181'),]$Cat <- 4
+ICD9.data[ICD9.data$Cause %in% c('B181'),]$Cat <- 5
 
 ########## category 5
 ICD9.data[ICD9.data$Cause %in% c(paste0('B',25:30)),]$Cat <- 5
@@ -193,7 +189,7 @@ ICD10.data$Cat <- 10
 
 ########## category 1
 ICD10.data[ICD10.data$Cause2 %in% c(paste0('A0',0:9),paste0('A', 10:99),
-                                   paste0('B0', 0:9),paste0('B', 10:89),paste0('B', 99)),]$Cat <- 1
+                                   paste0('B0', 0:9),paste0('B', 10:89),paste0('B', 99)),]$Cat <- 9
 
 ########## category 2
 ICD10.data[ICD10.data$Cause2 %in% c(paste0('C0',0:9),paste0('C',10:21),paste0('C',25),paste0('C',30:34),'C53',
@@ -204,7 +200,7 @@ ICD10.data[ICD10.data$Cause2 %in% c(paste0('C',22:24),'C26',paste0('C',37:39),pa
                                    paste0('C',60:93),paste0('C',69:97)),]$Cat <- 3
 
 ########## category 4
-ICD10.data[ICD10.data$Cause2 %in% c(paste0('E',10:14)),]$Cat <- 4
+ICD10.data[ICD10.data$Cause2 %in% c(paste0('E',10:14)),]$Cat <- 5
 
 ########## category 5
 ICD10.data[ICD10.data$Cause2 %in% c(paste0('I0',0:9),paste0('I',10:99)),]$Cat <- 5
