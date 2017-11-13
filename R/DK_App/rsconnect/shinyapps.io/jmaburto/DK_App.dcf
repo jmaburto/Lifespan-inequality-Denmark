@@ -3,9 +3,9 @@ title: DK_App
 account: jmaburto
 server: shinyapps.io
 appId: 223157
-bundleId: 1034855
+bundleId: 1042938
 url: https://jmaburto.shinyapps.io/DK_App/
-when: 1508421595.38021
+when: 1508872291.5831
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: Decomp_Shiny_app.R

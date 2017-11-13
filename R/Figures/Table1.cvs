@@ -1,33 +1,28 @@
-"","Sex","Cause","ind","V1"
-"1","Female","Smoking related cancer","ex",0.32415611264534
-"2","Female","Above age 85","ex",-0.0475970614113805
-"3","Male","Smoking related cancer","ex",0.435373874339945
-"4","Male","Above age 85","ex",0.0411702622942158
-"5","Female","Non-Smoking related cancer","ex",0.238221476811077
-"6","Male","Non-Smoking related cancer","ex",0.218481930693443
-"7","Female","Cardiovascular","ex",0.207021295717524
-"8","Male","Cardiovascular","ex",0.333320941446843
-"9","Female","Respiratory-Infectious","ex",0.0265083380045468
-"10","Male","Respiratory-Infectious","ex",0.0544597039302346
-"11","Female","Respiratory-Non-infectious","ex",0.229192995595866
-"12","Male","Respiratory-Non-infectious","ex",0.117713778899358
-"13","Female","External","ex",-0.151363031983834
-"14","Male","External","ex",-0.188099466243131
-"15","Female","Other","ex",0.552133736730894
-"16","Male","Other","ex",0.774438371674407
-"17","Female","Smoking related cancer","cv",-0.00199093366719291
-"18","Female","Above age 85","cv",-0.000632412110975977
-"19","Male","Smoking related cancer","cv",-0.00173247825294659
-"20","Male","Above age 85","cv",0.00034474910223406
-"21","Female","Non-Smoking related cancer","cv",-0.00165045088474108
-"22","Male","Non-Smoking related cancer","cv",-0.000896871691097756
-"23","Female","Cardiovascular","cv",-0.0011521725110521
-"24","Male","Cardiovascular","cv",-0.00122303843610946
-"25","Female","Respiratory-Infectious","cv",-0.000262421243438643
-"26","Male","Respiratory-Infectious","cv",-8.92008327052773e-05
-"27","Female","Respiratory-Non-infectious","cv",-0.000799607607011088
-"28","Male","Respiratory-Non-infectious","cv",-0.000543631000721051
-"29","Female","External","cv",0.00309102154617874
-"30","Male","External","cv",0.00319525904164161
-"31","Female","Other","cv",-0.00829968809527618
-"32","Male","Other","cv",-0.0111248579002874
+	Sex	No	Cause	ex	cv			
+1	Male	1	Smoking related cancer	0.469967215	-0.001840246	0.001840246	0.01207007	15.25%
+2	Male	2	Non-Smoking related cancer	0.185537383	-0.000789771	0.000789771		6.54%
+3	Male	3	Cardiovascular	0.332685817	-0.00122726	0.00122726		10.17%
+4	Male	4	Respiratory-Infectious	0.054398593	-8.96E-05	8.95629E-05		0.74%
+5	Male	6	Respiratory-Non-infectious	0.117523691	-0.000544702	0.000544702		4.51%
+6	Male	6	External	-0.18815361	0.003193998	-0.003193998		-26.46%
+7	Male	7	Other	0.773730045	-0.011117276	0.011117276		92.11%
+8	Male	8	Above age 85	0.041170262	0.000344749	-0.000344749		-2.86%
+								
+9	Female	1	Smoking related cancer	0.348490422	-0.002119935	0.002119935	0.011696665	18.12%
+10	Female	2	Non-Smoking related cancer	0.217146458	-0.001518905	0.001518905		12.99%
+11	Female	3	Cardiovascular	0.205871175	-0.001155322	0.001155322		9.88%
+12	Female	4	Respiratory-Infectious	0.026410866	-0.000262779	0.000262779		2.25%
+13	Female	5	Respiratory-Non-infectious	0.228662834	-0.000801521	0.000801521		6.85%
+14	Female	6	External	-0.151264267	0.003086341	-0.003086341		-26.39%
+15	Female	7	Other	0.550553435	-0.008292131	0.008292131		70.89%
+16	Female	8	Above age 85	-0.047597061	-0.000632412	0.000632412		5.41%
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								

@@ -25,7 +25,8 @@ levels(DT_COD.melt$Sex) <- c('Males', 'Females')
 levels(DT_COD.melt$Age) <- Age.labels
 DT_COD.melt$Cat         <- as.factor(DT_COD.melt$Cat)
 levels(DT_COD.melt$Cat) <- Category.labels
-
+unique(DT_COD.melt$Age)
+#DT_COD.melt <- DT_COD.melt[DT_COD.melt$Age!= '80-84'& DT_COD.melt$Age!= '75-79',]
 
 # Analysis only for Denmark -----------------------------------------------
 
@@ -103,7 +104,7 @@ f3 <- ggplot(Prop.data, aes(Year,Dx))+
 
 
 
-pdf(file="R/Figures/Sensitivity.pdf",width=17,height=15,pointsize=6,useDingbats = F)
+pdf(file="R/Figures/Sensitivity.pdf",width=16,height=13,pointsize=6,useDingbats = F)
 print(f1)
 print(f2)
 print(f3)

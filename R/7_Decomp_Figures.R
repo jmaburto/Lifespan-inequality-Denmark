@@ -15,6 +15,9 @@ setwd("C:/Users/jmaburto/Documents/GitHub/Lifespan-inequality-Denmark")
 
 load('Data/Results.RData')
 
+new.level.order<- c("Smoking related cancer","Non-Smoking related cancer","Cardiovascular","Respiratory-Non-infectious","Respiratory-Infectious","External","Other","Above age 85")
+
+
 Decomp.ex  <- local(get(load("Data/DecompResults_ex_List.RData")))
 Decomp.cv  <- local(get(load("Data/DecompResults_cv_List.RData")))
 Compare.ex <- local(get(load("Data/Compare_DecompResults_ex_List.RData")))
@@ -28,16 +31,30 @@ DT.Decomp.cv$Period     <- (cut(DT.Decomp.cv$Year+1, breaks=c(1960,1975,1995,Inf
 DT.Decomp.ex            <- DT.Decomp.ex[,list(Contribution = sum(Contribution)), by = list(Sex,Country,Period,Cause,Age)]
 DT.Decomp.cv            <- DT.Decomp.cv[,list(Contribution = sum(Contribution)), by = list(Sex,Country,Period,Cause,Age)]
 
+
 base2 <- c(rev(brewer.pal(8,name = 'Spectral'))[1:5],rev(brewer.pal(8,name = 'Spectral'))[8],'lightgrey','lightpink')
+base2[2] <- 'lightseagreen'
+base2[4] <- 'tan1'
+
+levels(DT.compare.ex$Cause)
+
+DT.Decomp.ex$Cause <- factor(DT.Decomp.ex$Cause, levels = new.level.order)
+DT.Decomp.cv$Cause <- factor(DT.Decomp.cv$Cause, levels = new.level.order)
+DT.compare.ex$Cause <- factor(DT.compare.ex$Cause, levels = new.level.order)
+DT.compare.cv$Cause <- factor(DT.compare.cv$Cause, levels = new.level.order)
+
+
+#base2 <- c("#66C2A5",   "#ABDDA4",'peachpuff2', '#fc8d62','coral2',   "#D53E4F" ,  "lightgrey" ,"lightpink")
+
 # Changes in Denmark in life expectancy
 p <- ggplot(DT.Decomp.ex[DT.Decomp.ex$Sex == 'Female' & DT.Decomp.ex$Country=='Denmark',], aes(x = Age, y = Contribution, fill = Cause)) +
   ggtitle('A Decomposition of life expectancy', subtitle = 'Danish females. Negative (positive) values decrease (increase) life expectancy')+
   facet_wrap(~Period)+
-  scale_fill_manual('Cause of death', values = base2) + 
+  scale_fill_manual('Cause of death', values = base2) +
   geom_bar(stat = "identity",position = "stack")+
   theme_light()+
   theme(text = element_text(size=10),
-        axis.text.x = element_text(angle=45, hjust=1))+
+        axis.text.x = element_text(angle=45, hjust=1),panel.grid.minor.x = element_blank())+
   labs(x = "Age group", y = "Years",size=10)+
   theme(text = element_text(size=10),
         strip.text.x = element_text(size = 10, colour = "black"))+
@@ -55,7 +72,7 @@ q <- ggplot(DT.Decomp.cv[DT.Decomp.cv$Sex == 'Female' & DT.Decomp.cv$Country=='D
   geom_bar(stat = "identity",position = "stack", show.legend = F)+
   theme_light()+  coord_cartesian(ylim=c(-.0035, .003))+
   theme(text = element_text(size=10),
-        axis.text.x = element_text(angle=45, hjust=1))+
+        axis.text.x = element_text(angle=45, hjust=1),panel.grid.minor.x = element_blank())+
   labs(x = "Age group", y = "Units",size=10)+
   theme(text = element_text(size=10),
         strip.text.x = element_text(size = 10, colour = "black"))+
@@ -83,7 +100,7 @@ r <- ggplot(DT.compare.ex[DT.compare.ex$Country=='Denmark' & DT.compare.ex$Year 
   geom_bar(stat = "identity",position = "stack")+
   theme_light()+
   theme(text = element_text(size=10),
-        axis.text.x = element_text(angle=45, hjust=1))+
+        axis.text.x = element_text(angle=45, hjust=1),panel.grid.minor.x = element_blank())+
   labs(x = "Age group", y = "Years",size=10)+
   theme(text = element_text(size=10),
         strip.text.x = element_text(size = 10, colour = "black"))+
@@ -101,7 +118,7 @@ s <- ggplot(DT.compare.cv[DT.compare.cv$Country=='Denmark' & DT.compare.cv$Year 
   geom_bar(stat = "identity",position = "stack", show.legend = F)+
   theme_light()+
   theme(text = element_text(size=10),
-        axis.text.x = element_text(angle=45, hjust=1))+
+        axis.text.x = element_text(angle=45, hjust=1),panel.grid.minor.x = element_blank())+
   labs(x = "Age group", y = "Units",size=10)+
   theme(text = element_text(size=10),
         strip.text.x = element_text(size = 10, colour = "black"))+

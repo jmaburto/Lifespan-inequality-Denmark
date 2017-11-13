@@ -80,6 +80,9 @@ ICD7.data[ICD7.data$Cause %in% c(paste0('A0',60:62),paste0('A0',64:69),
 unique(ICD7.data$Cat)
 ICD7.data <- ICD7.data[ICD7.data$Cat < 10,]
 
+#sort(unique(ICD7.data$Cause))
+
+
 # ICD 8 classification ----------------------------------------------------
 
 ICD8.data    <- COD_Data[COD_Data$ICD==8,]
@@ -197,7 +200,7 @@ ICD10.data[ICD10.data$Cause2 %in% c(paste0('C0',0:9),paste0('C',10:21),paste0('C
 
 ########## category 3
 ICD10.data[ICD10.data$Cause2 %in% c(paste0('C',22:24),'C26',paste0('C',37:39),paste0('C',40:41),paste0('C',43:52),paste0('C',54:58),
-                                   paste0('C',60:93),paste0('C',69:97)),]$Cat <- 3
+                                   paste0('C',60:63),paste0('C',69:97)),]$Cat <- 3
 
 ########## category 4
 ICD10.data[ICD10.data$Cause2 %in% c(paste0('E',10:14)),]$Cat <- 5
