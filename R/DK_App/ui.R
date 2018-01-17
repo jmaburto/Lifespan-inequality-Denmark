@@ -22,8 +22,8 @@ library(plotly)
     fluidPage(
       titlePanel('Lifespan inequality in Denmark, Sweden and Norway'),
       navbarPage(
-        'Aburto JM, Wensink M, Vaupel JW & Lindahl-Jacobsen R.  "Potential gains in life expectancy by reducing lifespan inequality in Denmark". 
-        Max Planck Center on the Biodemography of Aging, SDU, 2017',
+        'Aburto JM, Wensink M, van Raalte A & Lindahl-Jacobsen R.  "Potential gains in life expectancy by reducing lifespan inequality in Denmark: A cause of death analysis". 
+       Institute of Public Health, SDU, 2017',
         position = c("fixed-bottom")),
       
       sidebarLayout(
