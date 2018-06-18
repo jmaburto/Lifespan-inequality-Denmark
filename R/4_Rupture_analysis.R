@@ -1,6 +1,5 @@
 ###############################################################################
 ### Get CoD data for Denmark, Sweden and Norway. Source: WHO (07/07/2017)     #
-
 library(ggplot2)
 library(data.table)
 library(reshape2)
@@ -21,6 +20,8 @@ source('R/Functions_1.R')
 
 #rename categories, sexes and Age_groups
 
+DT_COD.melt$ICD <- as.factor(DT_COD.melt$ICD)
+levels(DT_COD.melt$ICD) <- c('ICD 7', 'ICD 8', 'ICD 9', 'ICD 10')
 levels(DT_COD.melt$Sex) <- c('Males', 'Females')
 levels(DT_COD.melt$Age) <- Age.labels
 DT_COD.melt$Cat         <- as.factor(DT_COD.melt$Cat)
@@ -29,27 +30,29 @@ unique(DT_COD.melt$Age)
 #DT_COD.melt <- DT_COD.melt[DT_COD.melt$Age!= '80-84'& DT_COD.melt$Age!= '75-79',]
 
 # Analysis only for Denmark -----------------------------------------------
-
 Prop.data <- DT_COD.melt[,list(Dx=sum(Dx)), by = list(Country.name, ICD, Year,Sex,Cat)]
 Prop.data <- Prop.data[Prop.data$Country.name=='Denmark',]
   
 change.ICD <- NULL
-change.ICD$Year   <- c(1969,1994)
+change.ICD$Year   <- c(1969,NA,1994)
 change.ICD        <- data.frame(change.ICD)
-change.ICD$ICD    <- c('ICD 8', 'ICD 10')
+change.ICD$ICD    <- 8:10
+change.ICD$ICD    <- as.factor(change.ICD$ICD)
+levels(change.ICD$ICD)  <- c('ICD 8','ICD 9', 'ICD 10')
 
 f1 <- ggplot(Prop.data, aes(Year,Dx))+
-  ggtitle('Denmark',subtitle = 'Years of change in ICDs: 1969 and 1994')+
-  geom_line(aes(colour = Sex), lwd=1,show.legend =T)+theme_light()+
+  ggtitle('A) Denmark',subtitle = 'Years of change in ICDs: 1969 and 1994')+
+  geom_line(aes(colour = Sex), lwd=1,show.legend =T)+
+  theme_light()+
   geom_point(aes(colour = Sex), lwd=1,show.legend =F)+
   theme(text = element_text(size=20))+
-  facet_wrap(~Cat,scales = "free",ncol = 3)+ xlim(c(1960, 2014))+
+  facet_wrap(~Cat,scales = "free",ncol = 3)+
+  xlim(c(1960, 2014))+
   geom_vline(data=change.ICD, 
-             aes(xintercept=Year, 
-                 colour = ICD),
-             show.legend = T)+
+             aes(xintercept=Year,color=ICD), show.legend = F)+
   theme(legend.title=element_blank())+
   coord_fixed(1.5)
+f1
 
 # Analysis only for Sweden -----------------------------------------------
 
@@ -59,10 +62,13 @@ Prop.data <- Prop.data[Prop.data$Country.name=='Sweden',]
 change.ICD <- NULL
 change.ICD$Year   <- c(1969,1987,1997)
 change.ICD        <- data.frame(change.ICD)
-change.ICD$ICD    <- c('ICD 8', 'ICD 9', 'ICD 10')
+change.ICD$ICD    <- 8:10
+change.ICD$ICD    <- as.factor(change.ICD$ICD)
+levels(change.ICD$ICD)  <- c('ICD 8','ICD 9', 'ICD 10')
+
 
 f2 <- ggplot(Prop.data, aes(Year,Dx))+
-  ggtitle('Sweden',subtitle = 'Years of change in ICDs: 1969, 1987 and 1997')+
+  ggtitle('B) Sweden',subtitle = 'Years of change in ICDs: 1969, 1987 and 1997')+
   geom_line(aes(colour = Sex), lwd=1,show.legend =T)+theme_light()+
   geom_point(aes(colour = Sex), lwd=1,show.legend =F)+
   theme(text = element_text(size=20))+
@@ -104,10 +110,10 @@ f3 <- ggplot(Prop.data, aes(Year,Dx))+
 
 
 
-pdf(file="R/Figures/Sensitivity.pdf",width=16,height=13,pointsize=6,useDingbats = F)
+pdf(file="R/Figures/Sensitivity.pdf",width=13,height=11,pointsize=6,useDingbats = F)
 print(f1)
 print(f2)
-print(f3)
+#print(f3)
 dev.off()
 
 
