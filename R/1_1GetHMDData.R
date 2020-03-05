@@ -5,8 +5,8 @@ library(data.table)
 setwd("C:/Users/jmaburto/Documents/GitHub/Lifespan-inequality-Denmark")
 
 XYZ <- getHMDcountries()
-us <- "jmaburto@colmex.mx"
-pw <- "kolmogorov"
+us <- "@colmex.mx"
+pw <- ""
 
 # now grab all the lifetables and mesh together..
 # grab them all
