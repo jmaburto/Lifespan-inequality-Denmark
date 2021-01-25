@@ -42,6 +42,11 @@ mx.COD$mx.COD <- mx.COD$Dx.p * mx.COD$mx
 mx.COD        <- mx.COD[order(Country.name, Year, Sex, Cat, Age),]
 mx.COD.cast   <- dcast.data.table(mx.COD, Year+Sex+Country.name+Age ~ Cat, value.var = 'mx.COD')
 
+# names(mx.COD.cast)[5:11] <- paste0('Cause_',1:7)
+# 
+# mx.COD.cast[,Total.mx := Cause_1+Cause_2+Cause_3+Cause_4+Cause_5+Cause_6+Cause_7]
+# unique(mx.COD.cast$Country.name)
+# save(mx.COD.cast,file = 'Data/Hampton_example.RData')
 
 # perform decomposition
 sexes     <- unique(mx.COD.cast$Sex)
@@ -101,7 +106,7 @@ country.list          <- list()
 
 save(Decomp.results.list, file =  'Data/DecompResults_ex_List.RData')
 gc()
-# bruger   system forløbet 
+# bruger   system forl?bet 
 # 44.07    60.37  6009.63 
 
 
